@@ -22,8 +22,7 @@ DFT_RESULS_FILE = BENCHMARK_DFT_NAC_REF #"../data/old_kappas_phonondb3_Togo_PBE_
 
 DEBUG = False
 
-df_mlp_results = glob2df(in_pattern,max_files=None).reset_index()#.set_index(BENCHMARK_ID)
-
+df_mlp_results = glob2df(in_pattern,max_files=None).set_index(BENCHMARK_ID)
 #df_mlp_results= pd.read_json(in_path).set_index(BENCHMARK_ID)#, default_handler=as_dict_handler)
 #df_mlp_results.to_json(out_path)
 
@@ -34,23 +33,7 @@ print(df_mlp_results.keys())
 # Read DFT results
 df_dft_results = pd.read_json(DFT_RESULS_FILE).set_index(BENCHMARK_ID)
 
-
-for row in df_mlp_results.itertuples():
-
-    if row.name == "BeSe" :
-        print(np.array(row.fc3_supercell))
-        if np.all(np.diagonal(row.fc3_supercell) == np.array([3,3,2])):
-            df_mlp_results.loc[row.Index,"mp_id"] = "no-mp-3"
-            print("done")
-
-    if row.name == "BeS":
-        print(row.name,np.array(row.fc3_supercell))
-        if np.all(np.diagonal(row.fc3_supercell) == np.array([3,3,2])):
-            df_mlp_results.loc[row.Index,"mp_id"] = "no-mp-4"
-            print("done")
-
     
-df_mlp_results = df_mlp_results.set_index(BENCHMARK_ID)
 
 
 
@@ -69,8 +52,9 @@ mSRE, mSRME, rmseSRE, rmseSRME = get_metrics(df_mlp_filtered)
 df_mlp_filtered["DFT_kappa_TOT_ave"] = df_dft_results["kappa_TOT_ave"]
 
 pd.set_option('display.max_rows', None)
-df_mlp_final = df_mlp_filtered[["SRME","SRE","kappa_TOT_ave",'DFT_kappa_TOT_ave']]
-df_mlp_final[["kappa_TOT_ave",'DFT_kappa_TOT_ave']] = df_mlp_filtered[["kappa_TOT_ave",'DFT_kappa_TOT_ave']].applymap(lambda x : x[0])
+df_mlp_final = df_mlp_filtered[["SRME","SRE","kappa_TOT_ave",'DFT_kappa_TOT_ave']].copy()
+df_mlp_final["kappa_TOT_ave"] = df_mlp_final["kappa_TOT_ave"].apply(lambda x : x[0] if not pd.isna(x) else x)
+df_mlp_final["DFT_kappa_TOT_ave"] = df_mlp_final["DFT_kappa_TOT_ave"].apply(lambda x : x[0] if not pd.isna(x) else x)
 print(df_mlp_final.round(4))
 
 print(f"MODEL: {model_name}")

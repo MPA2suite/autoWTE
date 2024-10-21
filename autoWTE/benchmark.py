@@ -18,9 +18,9 @@ def add_benchmark_descriptors(
         df_dft_results,
     ):
     
-    df_mlp_filtered = df_mlp_filtered.applymap(lambda x: np.array(x) if isinstance(x, list) else x)
-    df_dft_results = df_dft_results.applymap(lambda x: np.array(x) if isinstance(x, list) else x)
-    df_mlp_filtered[LIST2NP_COLS] = df_mlp_filtered[LIST2NP_COLS].applymap(lambda x: np.array(x))
+    df_mlp_filtered = df_mlp_filtered.map(lambda x: np.array(x) if isinstance(x, list) else x)
+    df_dft_results = df_dft_results.map(lambda x: np.array(x) if isinstance(x, list) else x)
+    df_mlp_filtered[LIST2NP_COLS] = df_mlp_filtered[LIST2NP_COLS].map(lambda x: np.array(x))
 
     #[print(df_mlp_filtered[s].apply(lambda x :x.shape),s) for s in ["kappa_TOT_RTA","heat_capacity","temperatures","weights",'mode_kappa_C','mode_kappa_P_RTA']]
 
@@ -92,7 +92,7 @@ def calculate_SRME_dataframes(df_mlp,df_dft):
     srme_list = []
     for idx, row_mlp in df_mlp.iterrows():
         row_dft = df_dft.loc[idx]  
-        print(idx)
+
         result = calculate_SRME(row_mlp,row_dft)
         srme_list.append(result[0]) # append the first temperature SRME
 
@@ -119,7 +119,6 @@ def calculate_SRME(kappas_mlp,kappas_dft):
     else:
         dft_mode_kappa_TOT_ave = np.asarray(kappas_dft["mode_kappa_TOT_ave"])
 
-    print(mlp_mode_kappa_TOT_ave.shape,dft_mode_kappa_TOT_ave.shape)
 
     # calculating microscopic error for all temperatures
     microscopic_error = (np.abs(
