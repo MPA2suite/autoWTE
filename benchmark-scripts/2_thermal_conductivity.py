@@ -43,6 +43,7 @@ tc_results: dict[str, dict[str, Any]] = {}
 
 pbar = tqdm(df_force_sets.itertuples(),disable=not prog_bar)
 
+
 for force_sets in pbar:
     #try: 
         mat_id = force_sets.index 
