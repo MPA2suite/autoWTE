@@ -59,7 +59,7 @@ ZnTe 186 mp-8884
 AlN 186 mp-661
 MgTe 186 mp-1039
 CdSe 216 mp-2691
-BeSe 186 mp-1541
+BeSe 186 no-mp-3
 LiI 225 mp-22899
 CuCl 216 mp-22914
 GaN 216 mp-830
@@ -87,7 +87,7 @@ CdS 186 mp-672
 RbF 225 mp-11718
 NaF 225 mp-682
 SiC 186 mp-7631
-BeS 186 mp-422
+BeS 186 no-mp-4
 AlAs 186 mp-8881
 CuBr 186 no-mp-1
 ZnO 216 mp-1986

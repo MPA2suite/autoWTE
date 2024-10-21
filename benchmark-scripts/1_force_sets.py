@@ -18,7 +18,7 @@ from ase.io import read
 
 
 from autoWTE import aseatoms2str, get_force_sets, mutlistage_relax, BENCHMARK_ID
-from autoWTE.load import ImaginaryFrequencyError
+from autoWTE.utils import ImaginaryFrequencyError
 import autoWTE
 #from autoWTE.data import DataFiles
 
@@ -46,7 +46,7 @@ prog_bar = True
 
 slurm_array_task_count = int(os.getenv("SLURM_ARRAY_TASK_COUNT", "1"))
 slurm_array_task_id = int(os.getenv("SLURM_ARRAY_TASK_ID", "0"))
-slurm_array_job_id = os.getenv("SLURM_ARRAY_JOB_ID", 0)
+slurm_array_job_id = os.getenv("SLURM_ARRAY_JOB_ID", "debug")
 slurm_array_task_min = int(os.getenv("SLURM_ARRAY_TASK_MIN", "0"))
 
 
@@ -82,7 +82,6 @@ elif slurm_array_task_count > 1:
         slurm_array_task_id - slurm_array_task_min
     ]
 
-print(atoms_list)
 
 
 run_params = {
@@ -170,8 +169,11 @@ for atoms in tqdm_bar:
 
             force_set_results[mat_id]["fc2_set"] = fc2_set
             force_set_results[mat_id]["fc3_set"] = fc3_set
+            force_set_results[mat_id]["freqs_positive"] = True
+
     except ImaginaryFrequencyError as exc:
         warnings.warn(f"Obtained imaginary phonon frequencies in {mat_name},{mat_id}: {exc!r}")
+        force_set_results[mat_id]["are_frequencies_positive"] = False
         continue
     except KeyError as exc:
         warnings.warn(f"Failed to calculate force sets {mat_id}: {exc!r}")

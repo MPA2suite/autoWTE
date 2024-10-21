@@ -29,7 +29,7 @@ pbar = True
 tar_dir = '/mnt/scratch2/q13camb_scratch/bp443/foundational_TC/release/phonondb-PBE-data/'
 tar_list = ['phono3py_params_RS.tar.xz','phono3py_params_WZ.tar.xz','phono3py_params_ZB.tar.xz']
 
-conductivity_output= "benchmark"
+conductivity_output= "all"
 
 atoms_list= []
 
@@ -52,7 +52,7 @@ os.makedirs(os.path.dirname(nonac_outpath),exist_ok=True)
 print(f"Output to {nac_outpath} and {nonac_outpath}")
 
 count=0
-count_list=list(range(0,103))
+count_list=list(range(1,104))
 if slurm_array_job_id == "debug":
     count_list = count_list[:2]
 elif slurm_array_task_count > 1:

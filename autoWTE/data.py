@@ -18,7 +18,8 @@ DEFAULT_CACHE_DIR = os.getenv("AUTOWTE_CACHE_DIR", str(Path.home() / ".cache" / 
 def glob2df(
     file_pattern: str,
     data_loader: Callable[[Any], pd.DataFrame] = None,
-    show_progress: bool = True,
+    pbar: bool = True,
+    max_files = None,
     **load_options: Any,
 ) -> pd.DataFrame:
     """Merge multiple data files matching a glob pattern into a single dataframe.
@@ -49,9 +50,13 @@ def glob2df(
     if not matched_files:
         raise FileNotFoundError(f"No files matched the pattern: {file_pattern}")
 
+    if max_files is not None:
+        max_index = max_files if max_files < len(matched_files) else len(matched_files)
+        matched_files = matched_files[:max_index]
+
     # Load data from each file into a dataframe
     dataframes = []
-    for file_path in tqdm(matched_files, disable=not show_progress):
+    for file_path in tqdm(matched_files, disable=not pbar):
         df = data_loader(file_path, **load_options)
         dataframes.append(df)
 

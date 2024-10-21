@@ -7,45 +7,52 @@ import numpy as np
 from tqdm import tqdm
 from glob import glob
 
-from autoWTE import  calculate_conductivity_atoms, BENCHMARK_TEMPERATURES
+from autoWTE import  calculate_conductivity_atoms, glob2df, BENCHMARK_TEMPERATURES, BENCHMARK_ID, BENCHMARK_DFT_NAC_REF
 from autoWTE.benchmark import get_metrics, add_benchmark_descriptors
+import autoWTE
 
 module_dir = os.path.dirname(__file__)
-in_pattern = f"{module_dir}/2024-10-18-MACE-phonondb3-LTC-FIRE_0.005/conductivity_989612-*.json.gz"
-out_path = f"{module_dir}/2024-10-18-MACE-phonondb3-LTC-FIRE_0.005/conductivity_989612.json.gz"
+in_pattern = f"{module_dir}/2024-10-21-MACE-phononDB-LTC-LBFGS_MSR_0.005/conductivity_1058314-*.json.gz"
+out_path = f"{module_dir}/2024-10-21-MACE-phononDB-LTC-LBFGS_MSR_0.005/conductivity_1058314.json.gz"
 
 
 model_name = "MACE"
 
-DFT_RESULS_FILE = "../data/kappas_phonondb3_Togo_PBE_NAC.json.gz"
+DFT_RESULS_FILE = BENCHMARK_DFT_NAC_REF #"../data/old_kappas_phonondb3_Togo_PBE_NAC.json.gz"
 
 DEBUG = False
 
-in_files = sorted(glob(in_pattern))
+df_mlp_results = glob2df(in_pattern,max_files=None).reset_index()#.set_index(BENCHMARK_ID)
 
-print(*in_files,sep="\n")
+#df_mlp_results= pd.read_json(in_path).set_index(BENCHMARK_ID)#, default_handler=as_dict_handler)
+#df_mlp_results.to_json(out_path)
 
-# join NAC files
-dfs = {}
-for file_path in tqdm(in_files):
-    if file_path in dfs:
-        continue
-    df_i = pd.read_json(file_path).set_index("index")
-    dfs[file_path] = df_i
-
-df_mlp_results = pd.concat(dfs.values())
-
-#df_mlp_results= pd.read_json(in_path).set_index("index")#, default_handler=as_dict_handler)
-df_mlp_results.to_json(out_path)
-
-print(df_mlp_results)
-
+print(df_mlp_results.keys())
 # Calculating mean SRME and mean SRE
 
 
 # Read DFT results
-df_dft_results = pd.read_json(DFT_RESULS_FILE).set_index("index")
-print(df_dft_results.keys())
+df_dft_results = pd.read_json(DFT_RESULS_FILE).set_index(BENCHMARK_ID)
+
+
+for row in df_mlp_results.itertuples():
+
+    if row.name == "BeSe" :
+        print(np.array(row.fc3_supercell))
+        if np.all(np.diagonal(row.fc3_supercell) == np.array([3,3,2])):
+            df_mlp_results.loc[row.Index,"mp_id"] = "no-mp-3"
+            print("done")
+
+    if row.name == "BeS":
+        print(row.name,np.array(row.fc3_supercell))
+        if np.all(np.diagonal(row.fc3_supercell) == np.array([3,3,2])):
+            df_mlp_results.loc[row.Index,"mp_id"] = "no-mp-4"
+            print("done")
+
+    
+df_mlp_results = df_mlp_results.set_index(BENCHMARK_ID)
+
+
 
 if not DEBUG:
     df_mlp_filtered=df_mlp_results[df_mlp_results.index.isin(df_dft_results.index)]
@@ -62,7 +69,9 @@ mSRE, mSRME, rmseSRE, rmseSRME = get_metrics(df_mlp_filtered)
 df_mlp_filtered["DFT_kappa_TOT_ave"] = df_dft_results["kappa_TOT_ave"]
 
 pd.set_option('display.max_rows', None)
-print(df_mlp_filtered[["SRME","SRE","kappa_TOT_ave",'DFT_kappa_TOT_ave']].round(4))
+df_mlp_final = df_mlp_filtered[["SRME","SRE","kappa_TOT_ave",'DFT_kappa_TOT_ave']]
+df_mlp_final[["kappa_TOT_ave",'DFT_kappa_TOT_ave']] = df_mlp_filtered[["kappa_TOT_ave",'DFT_kappa_TOT_ave']].applymap(lambda x : x[0])
+print(df_mlp_final.round(4))
 
 print(f"MODEL: {model_name}")
 print(f"\tmean SRME: {mSRME}")

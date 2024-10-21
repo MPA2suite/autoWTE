@@ -1,5 +1,5 @@
-from autoWTE.fc_interface import *
-from autoWTE.load import *
+from autoWTE.fc_calc import *
+from autoWTE.utils import *
 
 def setup_CHGNet_calculator(device="cpu"):
     from chgnet.model.dynamics import CHGNetCalculator

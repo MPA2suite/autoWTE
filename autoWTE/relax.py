@@ -7,7 +7,7 @@ from ase.constraints import FixSymmetry
 from ase.filters import UnitCellFilter, ExpCellFilter, StrainFilter,FrechetCellFilter
 from ase.optimize import BFGS, FIRE, MDMin, GPMin
 from ase.spacegroup.symmetrize import check_symmetry
-from autoWTE.load import *
+from autoWTE.utils import *
 import warnings, os
 
 from pathlib import Path
@@ -148,8 +148,8 @@ def mutlistage_relax(
         warnings.warn(f"SYMMETRY IS NOT KEPT AFTER DELETING CONSTRAINT, redirecting to structure with symmetry, in folder {os.getcwd()}")
 
     cell_diff = (atoms.cell.cellpar() / input_cellpar - 1.0) * 100
-    log_message("Optimized Cell         :", atoms.cell.cellpar(),output=log)
-    log_message("Optimized Cell diff (%):", cell_diff,output=log)
+    log_message(f"Optimized Cell         : {atoms.cell.cellpar()}",output=log)
+    log_message(f"Optimized Cell diff (%): {cell_diff}",output=log)
 
     return atoms
 

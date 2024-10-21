@@ -14,8 +14,7 @@ from phono3py.cui.phono3py_script import run_isotope_then_exit, init_phph_intera
 from phono3py.file_IO import write_fc2_to_hdf5, write_fc3_to_hdf5
 from phono3py.cui.settings import Phono3pyConfParser, Phono3pySettings
 
-from autoWTE.load import aseatoms2phono3py 
-from autoWTE.load import log_message
+from autoWTE.utils import aseatoms2phono3py, log_message
 from autoWTE import BENCHMARK_TEMPERATURES
 
 KAPPA_OUTPUT_NAME_MAP = {
@@ -218,21 +217,21 @@ def calculate_conductivity_atoms(
                   log_level = 1 if log != False else 0,
                   **_phono3py_kwargs)
     
-    log_message("Generating displacement",log)
+    log_message("Generating displacement",output=log)
     if disp_kwargs is None : 
         disp_kwargs = {"distance" : 0.03,
                        "cutoff_pair_distance" : None}
     ph3.generate_displacements(**disp_kwargs)
     
 
-    log_message("Setting and producing force constants",log)
+    log_message("Setting and producing force constants",output=log)
     ph3.phonon_forces = fc2_set
     ph3.forces = fc3_set
     ph3.produce_fc2(symmetrize_fc2=symmetrize_fc)
     ph3.produce_fc3(symmetrize_fc3r=symmetrize_fc)
 
     if save_fc_filename != False :
-        log_message("Saving HDF5 force constants.",log)
+        log_message("Saving HDF5 force constants.",output=log)
         if save_fc_filename == True:
             fc_filename_append = ""
         else:
@@ -250,7 +249,7 @@ def calculate_conductivity_atoms(
             filename = f"fc3{fc_filename_append}.hdf5"
         )
     
-    log_message("Starting thermal conductivity calculation",log)
+    log_message("Starting thermal conductivity calculation",output=log)
     
     if kwargs is None:
         kwargs = {
@@ -291,7 +290,7 @@ def calculate_conductivity_load(
         ph3.produce_fc3(symmetrize_fc3r=symmetrize_fc)
 
     if save_fc_filename != False :
-        log_message("Saving HDF5 force constants.",log)
+        log_message("Saving HDF5 force constants.",output=log)
         if save_fc_filename == True:
             fc_filename_append = ""
         else:
@@ -309,7 +308,7 @@ def calculate_conductivity_load(
             filename = f"fc3{fc_filename_append}.hdf5"
         )
     
-    log_message("Starting thermal conductivity calculation",log)
+    log_message("Starting thermal conductivity calculation",output=log)
 
 
     

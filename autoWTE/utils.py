@@ -34,7 +34,7 @@ def str2aseatoms(atoms_string,format='extxyz'):
     buffer = io.StringIO(atoms_string)
     return read(buffer, format=format)
 
-def log_message(output=True,sep=" ",*messages,**kwargs):
+def log_message(*messages,output=True,sep=" ",**kwargs):
 
     timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     write_message = f"{timestamp} - {sep.join((str(m) for m in messages))}"

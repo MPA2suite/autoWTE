@@ -8,8 +8,10 @@ import warnings
 FREQUENCY_THRESHOLD = -1e-2
 MODE_KAPPA_THRESHOLD = 1e-6
 
+LIST2NP_COLS = ["heat_capacity","kappa_TOT_RTA"]
+
 def fill_na_in_list(lst,y):
-    return [y if pd.isna(x) else x for x in lst]
+    return np.asarray([y if pd.isna(x) else x for x in lst])
 
 def add_benchmark_descriptors(
         df_mlp_filtered,
@@ -18,19 +20,22 @@ def add_benchmark_descriptors(
     
     df_mlp_filtered = df_mlp_filtered.applymap(lambda x: np.array(x) if isinstance(x, list) else x)
     df_dft_results = df_dft_results.applymap(lambda x: np.array(x) if isinstance(x, list) else x)
-    df_mlp_filtered["heat_capacity"] = df_mlp_filtered["heat_capacity"].apply(lambda x: np.array(x))
-    
+    df_mlp_filtered[LIST2NP_COLS] = df_mlp_filtered[LIST2NP_COLS].applymap(lambda x: np.array(x))
+
     #[print(df_mlp_filtered[s].apply(lambda x :x.shape),s) for s in ["kappa_TOT_RTA","heat_capacity","temperatures","weights",'mode_kappa_C','mode_kappa_P_RTA']]
 
 
     df_mlp_filtered["are_frequencies_positive"] = df_mlp_filtered["frequencies"].apply(are_frequencies_positive)
     
     df_mlp_filtered["kappa_TOT_ave"] = df_mlp_filtered['kappa_TOT_RTA'].apply(calculate_kappa_ave)
-    df_dft_results["kappa_TOT_ave"] = df_dft_results['kappa_TOT_RTA'].apply(calculate_kappa_ave)
+    # df_dft_results["kappa_TOT_ave"] = df_dft_results['kappa_TOT_RTA'].apply(calculate_kappa_ave)
 
     df_mlp_filtered["SRD"] = 2*(df_mlp_filtered["kappa_TOT_ave"] - df_dft_results['kappa_TOT_ave'])/(df_mlp_filtered["kappa_TOT_ave"] + df_dft_results['kappa_TOT_ave'])
-    df_mlp_filtered["SRD"] = df_mlp_filtered["SRD"].apply(fill_na_in_list,args=(-2,))
+    
+    # turn temperature list to the first temperature (300K) TODO: allow multiple temperatures to be tested
+    df_mlp_filtered["SRD"] = df_mlp_filtered["SRD"].apply(lambda x : x[0])
 
+    df_mlp_filtered["SRD"] = df_mlp_filtered["SRD"].fillna(-2)
 
     df_mlp_filtered["SRE"] = df_mlp_filtered["SRD"].abs()
 
@@ -87,9 +92,11 @@ def calculate_SRME_dataframes(df_mlp,df_dft):
     srme_list = []
     for idx, row_mlp in df_mlp.iterrows():
         row_dft = df_dft.loc[idx]  
-    
+        print(idx)
         result = calculate_SRME(row_mlp,row_dft)
-        srme_list.append(result)
+        srme_list.append(result[0]) # append the first temperature SRME
+
+        #TODO: Multiple temperature tests.
 
     return srme_list
 
@@ -97,22 +104,27 @@ def calculate_SRME_dataframes(df_mlp,df_dft):
 def calculate_SRME(kappas_mlp,kappas_dft):
 
     if np.all(pd.isna(kappas_mlp["kappa_TOT_ave"])):
-        return 2
+        return [2]
     if np.any(pd.isna(kappas_mlp["kappa_TOT_RTA"])):
-        return 2 #np.nan
+        return [2] #np.nan
     if np.any(pd.isna(kappas_mlp["weights"])):
-        return 2 #np.nan
-    if np.any(pd.isna(kappas_dft["kappa_TOT_RTA"])):
-        return 2 #np.nan
+        return [2] #np.nan
+    if np.any(pd.isna(kappas_dft["kappa_TOT_ave"])):
+        return [2] #np.nan
     
-    mlp_mode_kappa_TOT = calculate_mode_kappa_TOT(kappas_mlp)
+    mlp_mode_kappa_TOT_ave = calculate_kappa_ave(calculate_mode_kappa_TOT(kappas_mlp))
 
-    dft_mode_kappa_TOT = calculate_mode_kappa_TOT(kappas_dft)
+    if "mode_kappa_TOT_ave" not in kappas_dft.keys():
+        dft_mode_kappa_TOT_ave = calculate_kappa_ave(calculate_mode_kappa_TOT(kappas_dft))
+    else:
+        dft_mode_kappa_TOT_ave = np.asarray(kappas_dft["mode_kappa_TOT_ave"])
+
+    print(mlp_mode_kappa_TOT_ave.shape,dft_mode_kappa_TOT_ave.shape)
 
     # calculating microscopic error for all temperatures
     microscopic_error = (np.abs(
-        calculate_kappa_ave(mlp_mode_kappa_TOT-dft_mode_kappa_TOT) # reduce ndim by 1
-        ).sum( axis=tuple(range(1,mlp_mode_kappa_TOT.ndim-1)) ) # summing axes
+        (mlp_mode_kappa_TOT_ave - dft_mode_kappa_TOT_ave) # reduce ndim by 1
+        ).sum( axis=tuple(range(1,mlp_mode_kappa_TOT_ave.ndim)) ) # summing axes
         / kappas_mlp["weights"].sum())
     
     

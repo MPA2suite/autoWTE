@@ -16,7 +16,7 @@ import sys
 
 from phono3py.api_phono3py import Phono3py
 
-from autoWTE.load import aseatoms2phono3py, log_message, get_chemical_formula, ImaginaryFrequencyError
+from autoWTE.utils import aseatoms2phono3py, log_message, get_chemical_formula, ImaginaryFrequencyError
 from autoWTE.benchmark import are_frequencies_positive, FREQUENCY_THRESHOLD
 
 
