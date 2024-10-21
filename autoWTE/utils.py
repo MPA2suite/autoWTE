@@ -1,13 +1,10 @@
 from phono3py.cui.load import load
 from ase.io import read, write
-from ase.io.vasp import read_vasp
 from ase import Atoms
-from ase.spacegroup.symmetrize import check_symmetry
+
 from phonopy.structure.atoms import PhonopyAtoms
 from phono3py.api_phono3py import Phono3py
-from phonopy.api_phonopy import Phonopy
-from phonopy import file_IO
-import h5py
+
 import numpy as np
 import datetime
 import io

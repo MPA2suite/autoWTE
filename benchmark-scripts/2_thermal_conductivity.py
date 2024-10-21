@@ -1,4 +1,4 @@
-import autoWTE
+
 import warnings
 import os
 from copy import deepcopy
@@ -10,7 +10,7 @@ from tqdm import tqdm
 from autoWTE.utils import str2aseatoms
 from autoWTE.data import glob2df
 from autoWTE import  calculate_conductivity_atoms, BENCHMARK_TEMPERATURES, BENCHMARK_ID, BENCHMARK_DFT_NAC_REF
-from autoWTE.benchmark import get_metrics, add_benchmark_descriptors
+
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="spglib") 
 

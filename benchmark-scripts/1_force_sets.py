@@ -20,15 +20,13 @@ from ase.io import read
 from autoWTE import aseatoms2str, get_force_sets, mutlistage_relax, BENCHMARK_ID
 from autoWTE.utils import ImaginaryFrequencyError
 import autoWTE
-#from autoWTE.data import DataFiles
 
-from pymatviz.enums import Key
 from mace.calculators import mace_mp
 import torch
 
 
 
-# %% this config is editable
+# editable config
 model_name = "MACE"
 checkpoint = "https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0/2024-01-07-mace-128-L2_epoch-199.model" #"https://github.com/ACEsuit/mace-mp/releases/download/mace_mp_0b/mace_agnesi_medium.model"
 
@@ -50,7 +48,7 @@ slurm_array_job_id = os.getenv("SLURM_ARRAY_JOB_ID", "debug")
 slurm_array_task_min = int(os.getenv("SLURM_ARRAY_TASK_MIN", "0"))
 
 
-task_type = "LTC" # "initial structure to relaxed force constants"
+task_type = "LTC" # lattice thermal conductivity
 job_name = f"{model_name}-phononDB-{task_type}-{ase_optimizer}{'_MSR' if multistage_relaxation else ''}_{force_max}"
 module_dir = os.path.dirname(__file__)
 out_dir = os.getenv("SBATCH_OUTPUT", f"{module_dir}/{datetime.datetime.now().strftime('%Y-%m-%d')}-{job_name}")
@@ -84,22 +82,7 @@ elif slurm_array_task_count > 1:
 
 
 
-run_params = {
-    "data_path": data_path,
-    #"versions": {dep: version(dep) for dep in ("mace-torch", "numpy", "torch")},
-    "checkpoint": checkpoint,
-    Key.task_type: task_type,
-    "n_structures": len(atoms_list),
-    "max_steps": max_steps,
-    "force_max": force_max,
-    "ase_optimizer": ase_optimizer,
-    "device": device,
-    "model_name": model_name,
-    "dtype": dtype,
-    "ase_filter": ase_filter,
-}
 
-#
 filter_cls: Callable[[Atoms], Atoms] = {
     "frechet": FrechetCellFilter,
     "exp": ExpCellFilter,
@@ -110,7 +93,7 @@ force_set_results : dict[str, dict[str, Any]] = {}
 
 tqdm_bar = tqdm(atoms_list, desc="Relaxing and force sets calculation",disable=not prog_bar)
 for atoms in tqdm_bar:
-    mat_id = atoms.info[autoWTE.BENCHMARK_ID] #[Key.mat_id]
+    mat_id = atoms.info[autoWTE.BENCHMARK_ID] 
     if mat_id in force_set_results:
         continue
     if "name" in atoms.info.keys():
@@ -180,7 +163,7 @@ for atoms in tqdm_bar:
         continue
 
 
-df_out = pd.DataFrame(force_set_results).T#.add_prefix("mace_")
+df_out = pd.DataFrame(force_set_results).T
 df_out.index.name = BENCHMARK_ID
 df_out.reset_index().to_json(out_path)
     

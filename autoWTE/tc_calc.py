@@ -1,7 +1,7 @@
 import os
 from ase import Atoms
 from numpy.typing import ArrayLike
-from typing import List, Tuple, Any, Union, Literal
+from typing import  Tuple, Any, Union, Literal
 from copy import deepcopy
 from pathlib import Path
 from copy import deepcopy
@@ -10,9 +10,7 @@ import warnings
 from phonopy.structure.atoms import PhonopyAtoms
 from phono3py.api_phono3py import Phono3py
 from phono3py.cui.load import load
-from phono3py.cui.phono3py_script import run_isotope_then_exit, init_phph_interaction
 from phono3py.file_IO import write_fc2_to_hdf5, write_fc3_to_hdf5
-from phono3py.cui.settings import Phono3pyConfParser, Phono3pySettings
 
 from autoWTE.utils import aseatoms2phono3py, log_message
 from autoWTE import BENCHMARK_TEMPERATURES

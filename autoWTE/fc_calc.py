@@ -2,17 +2,13 @@ from pathlib import Path
 
 from numpy.typing import ArrayLike
 from typing import Tuple, Any
-from copy import deepcopy
 
-import datetime
+
 from ase import Atoms
 from ase.calculators.calculator import Calculator
 import numpy as np
 from tqdm import tqdm
-from phono3py.file_IO import write_fc2_to_hdf5, write_fc3_to_hdf5
-import pickle
-import time
-import sys
+
 
 from phono3py.api_phono3py import Phono3py
 

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from autoWTE import BENCHMARK_TEMPERATURES
+#from autoWTE import BENCHMARK_TEMPERATURES
 
 import warnings
 
@@ -22,14 +22,12 @@ def add_benchmark_descriptors(
     df_dft_results = df_dft_results.map(lambda x: np.array(x) if isinstance(x, list) else x)
     df_mlp_filtered[LIST2NP_COLS] = df_mlp_filtered[LIST2NP_COLS].map(lambda x: np.array(x))
 
-    #[print(df_mlp_filtered[s].apply(lambda x :x.shape),s) for s in ["kappa_TOT_RTA","heat_capacity","temperatures","weights",'mode_kappa_C','mode_kappa_P_RTA']]
-
+   
 
     df_mlp_filtered["are_frequencies_positive"] = df_mlp_filtered["frequencies"].apply(are_frequencies_positive)
     
     df_mlp_filtered["kappa_TOT_ave"] = df_mlp_filtered['kappa_TOT_RTA'].apply(calculate_kappa_ave)
-    # df_dft_results["kappa_TOT_ave"] = df_dft_results['kappa_TOT_RTA'].apply(calculate_kappa_ave)
-
+   
     df_mlp_filtered["SRD"] = 2*(df_mlp_filtered["kappa_TOT_ave"] - df_dft_results['kappa_TOT_ave'])/(df_mlp_filtered["kappa_TOT_ave"] + df_dft_results['kappa_TOT_ave'])
     
     # turn temperature list to the first temperature (300K) TODO: allow multiple temperatures to be tested

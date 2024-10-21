@@ -112,7 +112,4 @@ class Files:
 class DataFiles(Files):
     """A class specifically for data files with predefined URLs."""
 
-    PHONONDB_STRUCTURES = Files(
-        "phonondb/phonondb3-pbe-structures.extxyz.zip",
-        "https://figshar"
-    )
+

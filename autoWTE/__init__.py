@@ -1,17 +1,13 @@
 import os
 
 
-#from autoWTE.data import *
-from importlib.metadata import Distribution, version
-
-
 PKG_NAME = "autoWTE"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 PKG_DIR = os.path.dirname(__file__)
-# repo root directory if editable install, else the pkg directory
+# repo root directory if editable install, TODO: else the package dir
 ROOT = os.path.dirname(PKG_DIR)
-DATA_DIR = f"{ROOT}/data"  # directory to store raw data
+DATA_DIR = f"{ROOT}/data"  # directory to store default data
 BENCHMARK_DATA_DIR = f"{DATA_DIR}"
 BENCHMARK_STRUCTURES_FILE = "phononDB-PBE-structures.extxyz"
 BENCHMARK_STRUCTURES = f"{DATA_DIR}/{BENCHMARK_STRUCTURES_FILE}"
