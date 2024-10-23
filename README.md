@@ -1,4 +1,5 @@
 # autoWTE: Automatic heat-conductivity predictions from the Wigner Transport Equation 
+[![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg)](https://arxiv.org/abs/2408.00755)
 
 autoWTE employs foundation Machine Learning Interatomic Potentials and phono3py to determine the Wigner Thermal conductivity in crystals with arbitrary composition and structure.
 
