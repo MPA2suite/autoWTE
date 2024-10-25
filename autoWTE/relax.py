@@ -181,7 +181,8 @@ def mutlistage_relax(
     if sym_middle_5['number']!=sym_after_5['number'] and force_symmetry:
         redirected_to_symm = True
         atoms=atoms_symmetry
-        warnings.warn(f"Symmetry is not kept after deleting FixSymmetry constraint, redirecting to structure with symmetry, in folder {os.getcwd()}")
+        warnings.warn(f"Symmetry is not kept after deleting FixSymmetry constraint, redirecting to structure with symmetry of material {mat_name}, in folder {os.getcwd()}")
+        log_message(f"Symmetry is not kept after deleting FixSymmetry constraint, redirecting to structure with symmetry of material {mat_name}, in folder {os.getcwd()}",output=log)
 
 
     cell_diff = (atoms.cell.cellpar() / input_cellpar - 1.0) * 100

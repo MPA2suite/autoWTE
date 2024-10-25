@@ -151,7 +151,7 @@ def get_force_sets(
         else:
             ph3.save(displacement_output)
     
-    fc2_set = calculate_fc2_set(ph3, calculator,log=log,pbar_kwargs=pbar_kwargs)
+    fc2_set = calculate_fc2_set(ph3, _calculator,log=log,pbar_kwargs=pbar_kwargs)
 
     if check_frequencies:
         frequencies = get_phonon_freqs_ph3(ph3)
@@ -160,7 +160,7 @@ def get_force_sets(
             raise ImaginaryFrequencyError(frequencies[frequencies<FREQUENCY_THRESHOLD])
         
         
-    fc3_set = calculate_fc3_set(ph3, calculator,log=log,pbar_kwargs=pbar_kwargs)
+    fc3_set = calculate_fc3_set(ph3, _calculator,log=log,pbar_kwargs=pbar_kwargs)
 
     return ph3, fc2_set, fc3_set
 
