@@ -2,7 +2,7 @@ import os
 
 
 PKG_NAME = "autoWTE"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 PKG_DIR = os.path.dirname(__file__)
 # repo root directory if editable install, TODO: else the package dir

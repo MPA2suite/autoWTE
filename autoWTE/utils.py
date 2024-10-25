@@ -1,14 +1,18 @@
-from phono3py.cui.load import load
-from ase.io import read, write
-from ase import Atoms
-
-from phonopy.structure.atoms import PhonopyAtoms
-from phono3py.api_phono3py import Phono3py
-
 import numpy as np
 import datetime
 import io
 import sys
+
+from phonopy.structure.atoms import PhonopyAtoms
+from phono3py.api_phono3py import Phono3py
+
+from ase.io import read, write
+from ase import Atoms
+from spglib import get_symmetry_dataset
+from ase.utils import atoms_to_spglib_cell
+
+
+
 
 
 
@@ -49,6 +53,19 @@ def log_message(*messages,output=True,sep=" ",**kwargs):
         # Write to the file object
         output.write(write_message + '\n',**kwargs)
         output.flush()
+
+def log_symmetry(atoms, symprec,output=True):
+    dataset = get_symmetry_dataset(atoms_to_spglib_cell(atoms),
+                                          symprec=symprec)
+    
+    log_message("ase.spacegroup.symmetrize: prec", symprec,
+          "got symmetry group number", dataset.number,
+          ", international (Hermann-Mauguin)", dataset.international,
+          ", Hall ", dataset.hall,
+          output = output)
+
+    return dataset
+
 
 def phono3py2aseatoms(ph3 : Phono3py) -> Atoms:
     phonopyatoms=ph3.unitcell
