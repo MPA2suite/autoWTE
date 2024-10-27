@@ -37,8 +37,8 @@ calc = mace_mp(model=checkpoint, device=device, default_dtype=dtype)
 ase_optimizer : Literal["FIRE", "LBFGS"] = "LBFGS"
 ase_filter: Literal["frechet", "exp"] = "frechet"
 multistage_relaxation = True
-max_steps = 500
-force_max = 0.005  # Run until the forces are smaller than this in eV/A
+max_steps = 300
+force_max = 0.0001  # Run until the forces are smaller than this in eV/A
 prog_bar = True
 
 
@@ -119,9 +119,7 @@ for atoms in tqdm_bar:
             else:
                 atoms = mutlistage_relax(
                     atoms,
-                    fmax=1e-4,
-                    fmax_step2=5e-5,
-                    fmax_init = 1e-3,
+                    fmax=force_max,
                     allow_tilt = False,
                     log="relax.log"
                 )
