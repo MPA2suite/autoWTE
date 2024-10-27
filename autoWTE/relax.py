@@ -37,7 +37,7 @@ def mutlistage_relax(
         position_optim_kwargs : dict | None = None,
         cell_params_optim_kwargs : dict | None = None,
         optim_kwargs : dict | None = None,
-        joint_relax : bool = True,
+        joint_relax : bool = False,
         steps : int = 300,
         symprec : float = 1e-5
         ):
