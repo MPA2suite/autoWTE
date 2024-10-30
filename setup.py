@@ -21,7 +21,7 @@ setup(
     name='autoWTE',
     version=get_version("autoWTE/__init__.py"),    
     description='Thermal conductivity test for foundation interatomic potentials',
-    url='https://github.com/PT-transport/autoWTE',
+    url='https://github.com/MPA2suite/autoWTE',
     author='Balázs Póta, Paramvir Ahlawat, Gábor Csányi, and Michele Simoncelli',
     author_email='ms2855@cam.ac.uk or michele.simoncelli@gmail.com',
     license='Academic Software Licence (ASL)',
